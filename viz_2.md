@@ -243,11 +243,11 @@ central_park =
   weather_df %>% 
   filter(name == "CentralPark_NY")
 
-wikiki = 
+waikiki = 
   weather_df %>% 
   filter(name == "Waikiki_HA")
 
-ggplot(data = wikiki, aes(x = date, y = tmax, color = name)) +
+ggplot(data = waikiki, aes(x = date, y = tmax, color = name)) +
   geom_point()+
   geom_line(data = central_park)
 ```
@@ -271,7 +271,7 @@ weather_df %>%
 
 ![](viz_2_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-what happen with milti-panel plot without faceting:
+what happen with multi-panel plot without faceting:
 
 ``` r
 tmin_tmax_p = 
@@ -309,3 +309,40 @@ tmin_tmax_p / (prcp_dens_p + tmax_date_p)
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
 ![](viz_2_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+## Data manipulation
+
+Control for factors
+
+``` r
+weather_df %>% 
+  mutate(
+    name = factor(name),
+    name = forcats::fct_relevel(name, c("Waikiki_HA"))
+  ) %>% 
+  ggplot(aes(x = name, y = tmax,fill = name)) +
+  geom_violin(alpha = .5)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](viz_2_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+What if I want densities for tmin and tmax simultaneously?
+
+``` r
+weather_df %>% 
+  #filter(name == "CentralPark_NY") %>% 
+  pivot_longer(
+    tmax:tmin, 
+    names_to = "observations", 
+    values_to = "temperatures"
+  ) %>% 
+  ggplot(aes(x = temperatures, fill = observations)) +
+  geom_density(alpha = .5) +
+  facet_grid(.~name)
+```
+
+    ## Warning: Removed 18 rows containing non-finite values (stat_density).
+
+![](viz_2_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
