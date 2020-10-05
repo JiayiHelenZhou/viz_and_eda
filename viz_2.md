@@ -158,3 +158,58 @@ weather_df %>%
 ``` r
 # scale_color_hue(h = c(100,300))
 ```
+
+## Themes
+
+shift the legend
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    tittle = "Temp plot",
+    x = "Min daily temp (C)",
+    y = "Max daily tem (C)",
+    caption = "Data from the anoaa package; temp in 2017."
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE) +
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_2_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+Change the overall theme
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    tittle = "Temp plot",
+    x = "Min daily temp (C)",
+    y = "Max daily tem (C)",
+    caption = "Data from the anoaa package; temp in 2017."
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE) +
+  #theme_bw()
+  #theme_classic()
+  #ggthemes::theme_economist()
+  #ggthemes::theme_excel()
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
+#the theme option need to go after changeing the overall theme
+```
