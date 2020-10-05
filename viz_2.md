@@ -89,7 +89,7 @@ weather_df %>%
 
 ![](viz_2_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
-## Labels adding text to explain
+## Labels: adding text to explain
 
 ``` r
 weather_df %>% 
@@ -106,3 +106,55 @@ weather_df %>%
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](viz_2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+## Scales:
+
+Start with the same plot: x and y scales
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    tittle = "Temp plot",
+    x = "Min daily temp (C)",
+    y = "Max daily tem (C)",
+    caption = "Data from the anoaa package; temp in 2017."
+  ) +
+  #continuous can be changed to discrete for categorical data.
+  scale_x_continuous(
+    breaks = c(-15, 0, 15),
+    labels = c("-15C", "0C", "15C")
+  ) +
+  #scale_y_continuous( trans = "sqrt" /"log")
+  scale_y_continuous(position = "right")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+Look at color scales:
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    tittle = "Temp plot",
+    x = "Min daily temp (C)",
+    y = "Max daily tem (C)",
+    caption = "Data from the anoaa package; temp in 2017."
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE)
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
+# scale_color_hue(h = c(100,300))
+```

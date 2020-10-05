@@ -35,7 +35,7 @@ weather_df %>%
   geom_point(alpha = .5)
 ```
 
-## Labels adding text to explain
+## Labels: adding text to explain
 ```{r}
 weather_df %>% 
   ggplot(aes(x = tmin, y = tmax, color = name)) +
@@ -48,7 +48,44 @@ weather_df %>%
   )
 ```
 
+## Scales: 
 
+Start with the same plot: x and y scales
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    tittle = "Temp plot",
+    x = "Min daily temp (C)",
+    y = "Max daily tem (C)",
+    caption = "Data from the anoaa package; temp in 2017."
+  ) +
+  #continuous can be changed to discrete for categorical data.
+  scale_x_continuous(
+    breaks = c(-15, 0, 15),
+    labels = c("-15C", "0C", "15C")
+  ) +
+  #scale_y_continuous( trans = "sqrt" /"log")
+  scale_y_continuous(position = "right")
+```
+
+Look at color scales:
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    tittle = "Temp plot",
+    x = "Min daily temp (C)",
+    y = "Max daily tem (C)",
+    caption = "Data from the anoaa package; temp in 2017."
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE)
+# scale_color_hue(h = c(100,300))
+```
 
 
 
