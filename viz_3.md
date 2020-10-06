@@ -4,6 +4,39 @@ Exploratory Analysis
 ## Setting options
 
 ``` r
+library(tidyverse)
+```
+
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+
+    ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+    ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
+    ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+    ## ✓ readr   1.3.1     ✓ forcats 0.5.0
+
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## x dplyr::filter() masks stats::filter()
+    ## x dplyr::lag()    masks stats::lag()
+
+``` r
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_color_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+``` r
 weather_df =  
   rnoaa::meteo_pull_monitors(
     c("USW00094728", "USC00519397", "USS0023B17S"),
@@ -215,3 +248,93 @@ weather_df %>%
     ##            name cold not_cold
     ##  CentralPark_NY   44      321
     ##    Waterhole_WA  172      193
+
+## General Summaries
+
+you can do a lot of summaries
+
+``` r
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    mean_prec = mean(prcp, na.rm = TRUE),
+    median_tmax = median(tmin, na.rm = TRUE)
+  ) %>% 
+  ggplot(aes(x = month, y = mean_tmax, color = name)) +
+  geom_point() +
+  geom_line()
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+<img src="viz_3_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />
+
+``` r
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(mean_tmax = mean(tmax)) %>%
+  ggplot(aes(x = month, y = mean_tmax, color = name)) + 
+    geom_point() + geom_line() + 
+    theme(legend.position = "bottom")
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+    ## Warning: Removed 2 rows containing missing values (geom_point).
+
+<img src="viz_3_files/figure-gfm/unnamed-chunk-10-1.png" width="90%" />
+multiple columns using the same summary `across`
+
+``` r
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(across(tmin:prcp, mean))
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+    ## # A tibble: 36 x 5
+    ## # Groups:   name [3]
+    ##    name           month        tmin  tmax  prcp
+    ##    <chr>          <date>      <dbl> <dbl> <dbl>
+    ##  1 CentralPark_NY 2017-01-01  0.748  5.98  39.5
+    ##  2 CentralPark_NY 2017-02-01  1.45   9.28  22.5
+    ##  3 CentralPark_NY 2017-03-01 -0.177  8.22  43.0
+    ##  4 CentralPark_NY 2017-04-01  9.66  18.3   32.5
+    ##  5 CentralPark_NY 2017-05-01 12.2   20.1   52.3
+    ##  6 CentralPark_NY 2017-06-01 18.2   26.3   40.4
+    ##  7 CentralPark_NY 2017-07-01 21.0   28.7   34.3
+    ##  8 CentralPark_NY 2017-08-01 19.5   27.2   27.4
+    ##  9 CentralPark_NY 2017-09-01 17.4   25.4   17.0
+    ## 10 CentralPark_NY 2017-10-01 13.9   21.8   34.3
+    ## # … with 26 more rows
+
+sometime the resulte is easier to read in another format
+
+``` r
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(mean_tmax = mean(tmax)) %>% 
+  pivot_wider(
+    names_from = name,
+    values_from = mean_tmax) %>% 
+  knitr::kable(digits = 1)
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+| month      | CentralPark\_NY | Waikiki\_HA | Waterhole\_WA |
+| :--------- | --------------: | ----------: | ------------: |
+| 2017-01-01 |             6.0 |        27.8 |         \-1.4 |
+| 2017-02-01 |             9.3 |        27.2 |           0.0 |
+| 2017-03-01 |             8.2 |        29.1 |           1.7 |
+| 2017-04-01 |            18.3 |        29.7 |           3.9 |
+| 2017-05-01 |            20.1 |          NA |          10.1 |
+| 2017-06-01 |            26.3 |        31.3 |          12.9 |
+| 2017-07-01 |            28.7 |          NA |          16.3 |
+| 2017-08-01 |            27.2 |        32.0 |          19.6 |
+| 2017-09-01 |            25.4 |        31.7 |          14.2 |
+| 2017-10-01 |            21.8 |        30.3 |           8.3 |
+| 2017-11-01 |            12.3 |        28.4 |           1.4 |
+| 2017-12-01 |             4.5 |        26.5 |           2.2 |
